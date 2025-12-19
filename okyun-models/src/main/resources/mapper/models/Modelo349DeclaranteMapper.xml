@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.okyun.models.mapper.Modelo349DeclaranteMapper">
+    
+    <resultMap type="Modelo349Declarante" id="Modelo349DeclaranteResult">
+        <result property="id"                                   column="id"    />
+        <result property="tipoRegistro"                         column="tipo_registro"    />
+        <result property="modeloDeclaracion"                    column="modelo_declaracion"    />
+        <result property="ejercicio"                            column="ejercicio"    />
+        <result property="nifDeclarante"                        column="nif_declarante"    />
+        <result property="nombreDeclarante"                     column="nombre_declarante"    />
+        <result property="telefonoContacto"                     column="telefono_contacto"    />
+        <result property="personaContacto"                      column="persona_contacto"    />
+        <result property="numeroIdentificativo"                 column="numero_identificativo"    />
+        <result property="declaracionTipo"                      column="declaracion_tipo"    />
+        <result property="numeroDeclaracionAnterior"            column="numero_declaracion_anterior"    />
+        <result property="periodo"                              column="periodo"    />
+        <result property="totalOperadoresIntracomunitarios"     column="total_operadores_intracomunitarios"    />
+        <result property="importeOperaciones"                   column="importe_operaciones"    />
+        <result property="totalOperadoresRectificaciones"       column="total_operadores_rectificaciones"    />
+        <result property="importeRectificaciones"               column="importe_rectificaciones"    />
+        <result property="indicadorCambioPeriodicidad"          column="indicador_cambio_periodicidad"    />
+        <result property="nifRepresentanteLegal"                column="nif_representante_legal"    />
+        <result property="estado"                               column="estado"    />
+        <result property="createTime"                           column="create_time"    />
+        <result property="updateTime"                           column="update_time"    />
+        <result property="createBy"                             column="create_by"    />
+        <result property="updateBy"                             column="update_by"    />
+        <result property="remark"                               column="remark"         />
+    </resultMap>
+
+    <resultMap id="Modelo349DeclaranteModelo349OperadorIntraResult" type="Modelo349Declarante" extends="Modelo349DeclaranteResult">
+        <collection property="modelo349OperadorIntraList" ofType="Modelo349OperadorIntra" column="id" select="selectModelo349OperadorIntraList" />
+    </resultMap>
+
+    <resultMap type="Modelo349OperadorIntra" id="Modelo349OperadorIntraResult">
+        <result property="id"                           column="id"    />
+        <result property="declaranteId"                 column="declarante_id"    />
+        <result property="tipoRegistro"                 column="tipo_registro"    />
+        <result property="modeloDeclaracion"            column="modelo_declaracion"    />
+        <result property="ejercicio"                    column="ejercicio"    />
+        <result property="nifDeclarante"                column="nif_declarante"    />
+        <result property="codigoPais"                   column="codigo_pais"    />
+        <result property="nifOperador"                  column="nif_operador"    />
+        <result property="nombreOperador"               column="nombre_operador"    />
+        <result property="claveOperacion"               column="clave_operacion"    />
+        <result property="baseImponible"                column="base_imponible"    />
+        <result property="nifDestinatarioSustituto"     column="nif_destinatario_sustituto"    />
+        <result property="nombreDestinatarioSustituto"  column="nombre_destinatario_sustituto"    />
+        <result property="ejercicioRectificacion"       column="ejercicio_rectificacion"    />
+        <result property="periodoRectificacion"         column="periodo_rectificacion"    />
+        <result property="baseImponibleRectificada"     column="base_imponible_rectificada"    />
+        <result property="baseImponibleAnterior"        column="base_imponible_anterior"    />
+    </resultMap>
+
+    <sql id="selectModelo349DeclaranteVo">
+        select
+            id, tipo_registro, modelo_declaracion, ejercicio,
+            nif_declarante, nombre_declarante, telefono_contacto, persona_contacto, numero_identificativo,
+            declaracion_tipo, numero_declaracion_anterior, periodo, total_operadores_intracomunitarios, importe_operaciones, total_operadores_rectificaciones, importe_rectificaciones
+            , indicador_cambio_periodicidad, nif_representante_legal, estado, create_time, update_time, create_by, update_by, remark
+        from modelo_349_declarante
+    </sql>
+
+    <select id="selectModelo349DeclaranteList" parameterType="Modelo349Declarante" resultMap="Modelo349DeclaranteResult">
+        <include refid="selectModelo349DeclaranteVo"/>
+        <where>  
+            <if test="ejercicio != null  and ejercicio != ''"> and ejercicio = #{ejercicio}</if>
+            <if test="nifDeclarante != null  and nifDeclarante != ''"> and nif_declarante = #{nifDeclarante}</if>
+            <if test="nombreDeclarante != null  and nombreDeclarante != ''"> and nombre_declarante = #{nombreDeclarante}</if>
+            <if test="numeroIdentificativo != null  and numeroIdentificativo != ''"> and numero_identificativo = #{numeroIdentificativo}</if>
+            <if test="declaracionTipo != null  and declaracionTipo != ''"> and declaracion_tipo = #{declaracionTipo}</if>
+            <if test="periodo != null  and periodo != ''"> and periodo = #{periodo}</if>
+            <if test="estado != null  and estado != ''"> and estado = #{estado}</if>
+        </where>
+    </select>
+    
+    <select id="selectModelo349DeclaranteById" parameterType="Long" resultMap="Modelo349DeclaranteModelo349OperadorIntraResult">
+        <include refid="selectModelo349DeclaranteVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectModelo349OperadorIntraList" resultMap="Modelo349OperadorIntraResult">
+        select
+            id, declarante_id, tipo_registro, modelo_declaracion, ejercicio
+             , nif_declarante, codigo_pais, nif_operador, nombre_operador, clave_operacion, base_imponible
+             , nif_destinatario_sustituto, nombre_destinatario_sustituto, ejercicio_rectificacion, periodo_rectificacion, base_imponible_rectificada, base_imponible_anterior
+        from modelo_349_operador_intra
+        where declarante_id = #{id}
+    </select>
+
+    <!-- 检查税务识别的唯一 -->
+    <select id="numeroIdentificativo" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+            SELECT 1 FROM modelo_349_declarante where numero_identificativo = #{numeroIdentificativo}
+            <if test="id != null">and id != #{id}</if>
+        )
+    </select>
+
+    <insert id="insertModelo349Declarante" parameterType="Modelo349Declarante" useGeneratedKeys="true" keyProperty="id">
+        insert into modelo_349_declarante
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tipoRegistro != null and tipoRegistro != ''">tipo_registro,</if>
+            <if test="modeloDeclaracion != null and modeloDeclaracion != ''">modelo_declaracion,</if>
+            <if test="ejercicio != null and ejercicio != ''">ejercicio,</if>
+            <if test="nifDeclarante != null and nifDeclarante != ''">nif_declarante,</if>
+            <if test="nombreDeclarante != null and nombreDeclarante != ''">nombre_declarante,</if>
+            <if test="telefonoContacto != null">telefono_contacto,</if>
+            <if test="personaContacto != null">persona_contacto,</if>
+            <if test="numeroIdentificativo != null and numeroIdentificativo != ''">numero_identificativo,</if>
+            <if test="declaracionTipo != null">declaracion_tipo,</if>
+            <if test="numeroDeclaracionAnterior != null">numero_declaracion_anterior,</if>
+            <if test="periodo != null and periodo != ''">periodo,</if>
+            <if test="totalOperadoresIntracomunitarios != null">total_operadores_intracomunitarios,</if>
+            <if test="importeOperaciones != null">importe_operaciones,</if>
+            <if test="totalOperadoresRectificaciones != null">total_operadores_rectificaciones,</if>
+            <if test="importeRectificaciones != null">importe_rectificaciones,</if>
+            <if test="indicadorCambioPeriodicidad != null">indicador_cambio_periodicidad,</if>
+            <if test="nifRepresentanteLegal != null">nif_representante_legal,</if>
+            <if test="estado != null">estado,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tipoRegistro != null and tipoRegistro != ''">#{tipoRegistro},</if>
+            <if test="modeloDeclaracion != null and modeloDeclaracion != ''">#{modeloDeclaracion},</if>
+            <if test="ejercicio != null and ejercicio != ''">#{ejercicio},</if>
+            <if test="nifDeclarante != null and nifDeclarante != ''">#{nifDeclarante},</if>
+            <if test="nombreDeclarante != null and nombreDeclarante != ''">#{nombreDeclarante},</if>
+            <if test="telefonoContacto != null">#{telefonoContacto},</if>
+            <if test="personaContacto != null">#{personaContacto},</if>
+            <if test="numeroIdentificativo != null and numeroIdentificativo != ''">#{numeroIdentificativo},</if>
+            <if test="declaracionTipo != null">#{declaracionTipo},</if>
+            <if test="numeroDeclaracionAnterior != null">#{numeroDeclaracionAnterior},</if>
+            <if test="periodo != null and periodo != ''">#{periodo},</if>
+            <if test="totalOperadoresIntracomunitarios != null">#{totalOperadoresIntracomunitarios},</if>
+            <if test="importeOperaciones != null">#{importeOperaciones},</if>
+            <if test="totalOperadoresRectificaciones != null">#{totalOperadoresRectificaciones},</if>
+            <if test="importeRectificaciones != null">#{importeRectificaciones},</if>
+            <if test="indicadorCambioPeriodicidad != null">#{indicadorCambioPeriodicidad},</if>
+            <if test="nifRepresentanteLegal != null">#{nifRepresentanteLegal},</if>
+            <if test="estado != null">#{estado},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateModelo349Declarante" parameterType="Modelo349Declarante">
+        update modelo_349_declarante
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tipoRegistro != null and tipoRegistro != ''">tipo_registro = #{tipoRegistro},</if>
+            <if test="modeloDeclaracion != null and modeloDeclaracion != ''">modelo_declaracion = #{modeloDeclaracion},</if>
+            <if test="ejercicio != null and ejercicio != ''">ejercicio = #{ejercicio},</if>
+            <if test="nifDeclarante != null and nifDeclarante != ''">nif_declarante = #{nifDeclarante},</if>
+            <if test="nombreDeclarante != null and nombreDeclarante != ''">nombre_declarante = #{nombreDeclarante},</if>
+            <if test="telefonoContacto != null">telefono_contacto = #{telefonoContacto},</if>
+            <if test="personaContacto != null">persona_contacto = #{personaContacto},</if>
+            <if test="numeroIdentificativo != null and numeroIdentificativo != ''">numero_identificativo = #{numeroIdentificativo},</if>
+            <if test="declaracionTipo != null">declaracion_tipo = #{declaracionTipo},</if>
+            <if test="numeroDeclaracionAnterior != null">numero_declaracion_anterior = #{numeroDeclaracionAnterior},</if>
+            <if test="periodo != null and periodo != ''">periodo = #{periodo},</if>
+            <if test="totalOperadoresIntracomunitarios != null">total_operadores_intracomunitarios = #{totalOperadoresIntracomunitarios},</if>
+            <if test="importeOperaciones != null">importe_operaciones = #{importeOperaciones},</if>
+            <if test="totalOperadoresRectificaciones != null">total_operadores_rectificaciones = #{totalOperadoresRectificaciones},</if>
+            <if test="importeRectificaciones != null">importe_rectificaciones = #{importeRectificaciones},</if>
+            <if test="indicadorCambioPeriodicidad != null">indicador_cambio_periodicidad = #{indicadorCambioPeriodicidad},</if>
+            <if test="nifRepresentanteLegal != null">nif_representante_legal = #{nifRepresentanteLegal},</if>
+            <if test="estado != null">estado = #{estado},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteModelo349DeclaranteById" parameterType="Long">
+        delete from modelo_349_declarante where id = #{id}
+    </delete>
+
+    <delete id="deleteModelo349DeclaranteByIds" parameterType="String">
+        delete from modelo_349_declarante where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteModelo349OperadorIntraByDeclaranteIds" parameterType="String">
+        delete from modelo_349_operador_intra where declarante_id in 
+        <foreach item="declaranteId" collection="array" open="(" separator="," close=")">
+            #{declaranteId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteModelo349OperadorIntraByDeclaranteId" parameterType="Long">
+        delete from modelo_349_operador_intra where declarante_id = #{declaranteId}
+    </delete>
+
+    <insert id="batchModelo349OperadorIntra">
+        insert into modelo_349_operador_intra
+            ( id, declarante_id, tipo_registro, modelo_declaracion, ejercicio, nif_declarante, codigo_pais, nif_operador, nombre_operador, clave_operacion, base_imponible
+            , nif_destinatario_sustituto, nombre_destinatario_sustituto, ejercicio_rectificacion, periodo_rectificacion, base_imponible_rectificada, base_imponible_anterior)
+        values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.id}, #{item.declaranteId}, #{item.tipoRegistro}, #{item.modeloDeclaracion}, #{item.ejercicio}, #{item.nifDeclarante}, #{item.codigoPais}, #{item.nifOperador}, #{item.nombreOperador}, #{item.claveOperacion}, #{item.baseImponible}
+            , #{item.nifDestinatarioSustituto}, #{item.nombreDestinatarioSustituto}, #{item.ejercicioRectificacion}, #{item.periodoRectificacion}, #{item.baseImponibleRectificada}, #{item.baseImponibleAnterior})
+        </foreach>
+    </insert>
+</mapper>

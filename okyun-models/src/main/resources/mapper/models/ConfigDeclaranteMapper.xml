@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.okyun.models.mapper.ConfigDeclaranteMapper">
+    
+    <resultMap type="ConfigDeclarante" id="ConfigDeclaranteResult">
+        <result property="declaracionId"    column="declaracion_id"    />
+        <result property="nifDeclarante"    column="nif_declarante"    />
+        <result property="nombreDeclarante"    column="nombre_declarante"    />
+        <result property="telefonoContacto"    column="telefono_contacto"    />
+        <result property="personaContacto"    column="persona_contacto"    />
+        <result property="nifRepresentanteLegal"    column="nif_representante_legal"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectConfigDeclaranteVo">
+        select declaracion_id, nif_declarante, nombre_declarante, telefono_contacto, persona_contacto, nif_representante_legal, create_time, update_time, create_by, update_by, remark from config_declarante
+    </sql>
+
+    <select id="selectConfigDeclaranteList" parameterType="ConfigDeclarante" resultMap="ConfigDeclaranteResult">
+        <include refid="selectConfigDeclaranteVo"/>
+        <where>  
+            <if test="nifDeclarante != null  and nifDeclarante != ''"> and nif_declarante = #{nifDeclarante}</if>
+            <if test="nombreDeclarante != null  and nombreDeclarante != ''"> and nombre_declarante = #{nombreDeclarante}</if>
+        </where>
+    </select>
+    
+    <select id="selectConfigDeclaranteByDeclaracionId" parameterType="Long" resultMap="ConfigDeclaranteResult">
+        <include refid="selectConfigDeclaranteVo"/>
+        where declaracion_id = #{declaracionId}
+    </select>
+
+    <!-- 校验nif -->
+    <select id="checkNifDeclaranteUnique" resultType="java.lang.Boolean">
+        SELECT  EXISTS(
+            select 1 from config_declarante where nif_declarante = #{nifDeclarante}
+            <if test="declaracionId != null">and declaracion_id != #{declaracionId}</if>
+        )
+    </select>
+
+    <!-- 查询所有申报人 -->
+    <select id="selectDeclarantes" resultMap="ConfigDeclaranteResult">
+        <include refid="selectConfigDeclaranteVo"/>
+        order by nombre_declarante
+    </select>
+
+    <insert id="insertConfigDeclarante" parameterType="ConfigDeclarante">
+        insert into config_declarante
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="declaracionId != null">declaracion_id,</if>
+            <if test="nifDeclarante != null and nifDeclarante != ''">nif_declarante,</if>
+            <if test="nombreDeclarante != null and nombreDeclarante != ''">nombre_declarante,</if>
+            <if test="telefonoContacto != null">telefono_contacto,</if>
+            <if test="personaContacto != null">persona_contacto,</if>
+            <if test="nifRepresentanteLegal != null">nif_representante_legal,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="declaracionId != null">#{declaracionId},</if>
+            <if test="nifDeclarante != null and nifDeclarante != ''">#{nifDeclarante},</if>
+            <if test="nombreDeclarante != null and nombreDeclarante != ''">#{nombreDeclarante},</if>
+            <if test="telefonoContacto != null">#{telefonoContacto},</if>
+            <if test="personaContacto != null">#{personaContacto},</if>
+            <if test="nifRepresentanteLegal != null">#{nifRepresentanteLegal},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateConfigDeclarante" parameterType="ConfigDeclarante">
+        update config_declarante
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nifDeclarante != null and nifDeclarante != ''">nif_declarante = #{nifDeclarante},</if>
+            <if test="nombreDeclarante != null and nombreDeclarante != ''">nombre_declarante = #{nombreDeclarante},</if>
+            <if test="telefonoContacto != null">telefono_contacto = #{telefonoContacto},</if>
+            <if test="personaContacto != null">persona_contacto = #{personaContacto},</if>
+            <if test="nifRepresentanteLegal != null">nif_representante_legal = #{nifRepresentanteLegal},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where declaracion_id = #{declaracionId}
+    </update>
+
+    <delete id="deleteConfigDeclaranteByDeclaracionId" parameterType="Long">
+        delete from config_declarante where declaracion_id = #{declaracionId}
+    </delete>
+
+    <delete id="deleteConfigDeclaranteByDeclaracionIds" parameterType="String">
+        delete from config_declarante where declaracion_id in 
+        <foreach item="declaracionId" collection="array" open="(" separator="," close=")">
+            #{declaracionId}
+        </foreach>
+    </delete>
+</mapper>

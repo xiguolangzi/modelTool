@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.okyun.models.mapper.ConfigPaisesUeMapper">
+    
+    <resultMap type="ConfigPaisesUe" id="ConfigPaisesUeResult">
+        <result property="id"           column="id"    />
+        <result property="codigoPais"    column="codigo_pais"    />
+        <result property="nombrePais"    column="nombre_pais"    />
+        <result property="lengthMin"    column="length_min"    />
+        <result property="lengthMax"    column="length_max"    />
+        <result property="formatoNif"    column="formato_nif"    />
+        <result property="regexValidacion"    column="regex_validacion"    />
+        <result property="activo"    column="activo"    />
+        <result property="fechaActualizacion"    column="fecha_actualizacion"    />
+    </resultMap>
+
+    <sql id="selectConfigPaisesUeVo">
+        select
+            id, codigo_pais, nombre_pais, length_min, length_max, formato_nif, regex_validacion, activo, fecha_actualizacion
+        from config_paises_ue
+    </sql>
+
+    <select id="selectConfigPaisesUeList" parameterType="ConfigPaisesUe" resultMap="ConfigPaisesUeResult">
+        <include refid="selectConfigPaisesUeVo"/>
+        <where>
+            <if test="codigoPais != null"> and codigo_pais = #{codigoPais}</if>
+            <if test="nombrePais != null  and nombrePais != ''"> and nombre_pais = #{nombrePais}</if>
+            <if test="activo != null "> and activo = #{activo}</if>
+        </where>
+        order by nombre_pais
+    </select>
+    
+    <select id="selectConfigPaisesUeById"  resultMap="ConfigPaisesUeResult">
+        <include refid="selectConfigPaisesUeVo"/>
+        where id = #{id}
+    </select>
+
+    <!-- 校验国家代码 -->
+    <select id="checkCodigoPaisUnique" resultType="java.lang.Boolean">
+        SELECT EXISTS(
+            SELECT 1 FROM config_paises_ue WHERE codigo_pais = #{codigoPais}
+            <if test="id != null"> AND id != #{id}</if>
+        )
+    </select>
+
+    <!-- 根据国家代码查询 -->
+    <select id="selectConfigPaisesUeByCodigoPais" resultMap="ConfigPaisesUeResult">
+        <include refid="selectConfigPaisesUeVo"/>
+        where codigo_pais = #{codigoPais} LIMIT 1
+    </select>
+
+    <insert id="insertConfigPaisesUe" parameterType="ConfigPaisesUe">
+        insert into config_paises_ue
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="codigoPais != null">codigo_pais,</if>
+            <if test="nombrePais != null and nombrePais != ''">nombre_pais,</if>
+            <if test="lengthMin != null">length_min,</if>
+            <if test="lengthMax != null">length_max,</if>
+            <if test="formatoNif != null">formato_nif,</if>
+            <if test="regexValidacion != null">regex_validacion,</if>
+            <if test="activo != null">activo,</if>
+            <if test="fechaActualizacion != null">fecha_actualizacion,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="codigoPais != null">#{codigoPais},</if>
+            <if test="nombrePais != null and nombrePais != ''">#{nombrePais},</if>
+            <if test="lengthMin != null">#{lengthMin},</if>
+            <if test="lengthMax != null">#{lengthMax},</if>
+            <if test="formatoNif != null">#{formatoNif},</if>
+            <if test="regexValidacion != null">#{regexValidacion},</if>
+            <if test="activo != null">#{activo},</if>
+            <if test="fechaActualizacion != null">#{fechaActualizacion},</if>
+         </trim>
+    </insert>
+
+    <update id="updateConfigPaisesUe" parameterType="ConfigPaisesUe">
+        update config_paises_ue
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="codigoPais != null">codigo_pais = #{codigoPais},</if>
+            <if test="nombrePais != null and nombrePais != ''">nombre_pais = #{nombrePais},</if>
+            <if test="lengthMin != null">length_min = #{lengthMin},</if>
+            <if test="lengthMax != null">length_max = #{lengthMax},</if>
+            <if test="formatoNif != null">formato_nif = #{formatoNif},</if>
+            <if test="regexValidacion != null">regex_validacion = #{regexValidacion},</if>
+            <if test="activo != null">activo = #{activo},</if>
+            <if test="fechaActualizacion != null">fecha_actualizacion = #{fechaActualizacion},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteConfigPaisesUeById" >
+        delete from config_paises_ue where id = #{id}
+    </delete>
+
+    <delete id="deleteConfigPaisesUeByIds" >
+        delete from config_paises_ue where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

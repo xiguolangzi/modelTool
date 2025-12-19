@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.okyun.models.mapper.Modelo349OperadorIntraMapper">
+    
+    <resultMap type="Modelo349OperadorIntra" id="Modelo349OperadorIntraResult">
+        <result property="id"    column="id"    />
+        <result property="declaranteId"    column="declarante_id"    />
+        <result property="tipoRegistro"    column="tipo_registro"    />
+        <result property="modeloDeclaracion"    column="modelo_declaracion"    />
+        <result property="ejercicio"    column="ejercicio"    />
+        <result property="nifDeclarante"    column="nif_declarante"    />
+        <result property="codigoPais"    column="codigo_pais"    />
+        <result property="nifOperador"    column="nif_operador"    />
+        <result property="nombreOperador"    column="nombre_operador"    />
+        <result property="claveOperacion"    column="clave_operacion"    />
+        <result property="baseImponible"    column="base_imponible"    />
+        <result property="ejercicioRectificacion"    column="ejercicio_rectificacion"    />
+        <result property="periodoRectificacion"    column="periodo_rectificacion"    />
+        <result property="baseImponibleRectificada"    column="base_imponible_rectificada"    />
+        <result property="baseImponibleAnterior"    column="base_imponible_anterior"    />
+        <result property="nifDestinatarioSustituto"    column="nif_destinatario_sustituto"    />
+        <result property="nombreDestinatarioSustituto"    column="nombre_destinatario_sustituto"    />
+    </resultMap>
+
+    <sql id="selectModelo349OperadorIntraVo">
+        select id, declarante_id, tipo_registro, modelo_declaracion, ejercicio, nif_declarante, codigo_pais, nif_operador, nombre_operador, clave_operacion, base_imponible, ejercicio_rectificacion, periodo_rectificacion, base_imponible_rectificada, base_imponible_anterior, nif_destinatario_sustituto, nombre_destinatario_sustituto from modelo_349_operador_intra
+    </sql>
+
+    <select id="selectModelo349OperadorIntraList" parameterType="Modelo349OperadorIntra" resultMap="Modelo349OperadorIntraResult">
+        <include refid="selectModelo349OperadorIntraVo"/>
+        <where>  
+            <if test="ejercicio != null  and ejercicio != ''"> and ejercicio = #{ejercicio}</if>
+            <if test="nifDeclarante != null  and nifDeclarante != ''"> and nif_declarante = #{nifDeclarante}</if>
+            <if test="codigoPais != null  and codigoPais != ''"> and codigo_pais = #{codigoPais}</if>
+            <if test="nifOperador != null  and nifOperador != ''"> and nif_operador = #{nifOperador}</if>
+            <if test="nombreOperador != null  and nombreOperador != ''"> and nombre_operador = #{nombreOperador}</if>
+            <if test="claveOperacion != null  and claveOperacion != ''"> and clave_operacion = #{claveOperacion}</if>
+        </where>
+    </select>
+    
+    <select id="selectModelo349OperadorIntraById" parameterType="Long" resultMap="Modelo349OperadorIntraResult">
+        <include refid="selectModelo349OperadorIntraVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertModelo349OperadorIntra" parameterType="Modelo349OperadorIntra" useGeneratedKeys="true" keyProperty="id">
+        insert into modelo_349_operador_intra
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="declaranteId != null">declarante_id,</if>
+            <if test="tipoRegistro != null">tipo_registro,</if>
+            <if test="modeloDeclaracion != null">modelo_declaracion,</if>
+            <if test="ejercicio != null and ejercicio != ''">ejercicio,</if>
+            <if test="nifDeclarante != null and nifDeclarante != ''">nif_declarante,</if>
+            <if test="codigoPais != null and codigoPais != ''">codigo_pais,</if>
+            <if test="nifOperador != null and nifOperador != ''">nif_operador,</if>
+            <if test="nombreOperador != null and nombreOperador != ''">nombre_operador,</if>
+            <if test="claveOperacion != null">clave_operacion,</if>
+            <if test="baseImponible != null">base_imponible,</if>
+            <if test="ejercicioRectificacion != null">ejercicio_rectificacion,</if>
+            <if test="periodoRectificacion != null">periodo_rectificacion,</if>
+            <if test="baseImponibleRectificada != null">base_imponible_rectificada,</if>
+            <if test="baseImponibleAnterior != null">base_imponible_anterior,</if>
+            <if test="nifDestinatarioSustituto != null">nif_destinatario_sustituto,</if>
+            <if test="nombreDestinatarioSustituto != null">nombre_destinatario_sustituto,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="declaranteId != null">#{declaranteId},</if>
+            <if test="tipoRegistro != null">#{tipoRegistro},</if>
+            <if test="modeloDeclaracion != null">#{modeloDeclaracion},</if>
+            <if test="ejercicio != null and ejercicio != ''">#{ejercicio},</if>
+            <if test="nifDeclarante != null and nifDeclarante != ''">#{nifDeclarante},</if>
+            <if test="codigoPais != null and codigoPais != ''">#{codigoPais},</if>
+            <if test="nifOperador != null and nifOperador != ''">#{nifOperador},</if>
+            <if test="nombreOperador != null and nombreOperador != ''">#{nombreOperador},</if>
+            <if test="claveOperacion != null">#{claveOperacion},</if>
+            <if test="baseImponible != null">#{baseImponible},</if>
+            <if test="ejercicioRectificacion != null">#{ejercicioRectificacion},</if>
+            <if test="periodoRectificacion != null">#{periodoRectificacion},</if>
+            <if test="baseImponibleRectificada != null">#{baseImponibleRectificada},</if>
+            <if test="baseImponibleAnterior != null">#{baseImponibleAnterior},</if>
+            <if test="nifDestinatarioSustituto != null">#{nifDestinatarioSustituto},</if>
+            <if test="nombreDestinatarioSustituto != null">#{nombreDestinatarioSustituto},</if>
+         </trim>
+    </insert>
+
+    <update id="updateModelo349OperadorIntra" parameterType="Modelo349OperadorIntra">
+        update modelo_349_operador_intra
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="declaranteId != null">declarante_id = #{declaranteId},</if>
+            <if test="tipoRegistro != null">tipo_registro = #{tipoRegistro},</if>
+            <if test="modeloDeclaracion != null">modelo_declaracion = #{modeloDeclaracion},</if>
+            <if test="ejercicio != null and ejercicio != ''">ejercicio = #{ejercicio},</if>
+            <if test="nifDeclarante != null and nifDeclarante != ''">nif_declarante = #{nifDeclarante},</if>
+            <if test="codigoPais != null and codigoPais != ''">codigo_pais = #{codigoPais},</if>
+            <if test="nifOperador != null and nifOperador != ''">nif_operador = #{nifOperador},</if>
+            <if test="nombreOperador != null and nombreOperador != ''">nombre_operador = #{nombreOperador},</if>
+            <if test="claveOperacion != null">clave_operacion = #{claveOperacion},</if>
+            <if test="baseImponible != null">base_imponible = #{baseImponible},</if>
+            <if test="ejercicioRectificacion != null">ejercicio_rectificacion = #{ejercicioRectificacion},</if>
+            <if test="periodoRectificacion != null">periodo_rectificacion = #{periodoRectificacion},</if>
+            <if test="baseImponibleRectificada != null">base_imponible_rectificada = #{baseImponibleRectificada},</if>
+            <if test="baseImponibleAnterior != null">base_imponible_anterior = #{baseImponibleAnterior},</if>
+            <if test="nifDestinatarioSustituto != null">nif_destinatario_sustituto = #{nifDestinatarioSustituto},</if>
+            <if test="nombreDestinatarioSustituto != null">nombre_destinatario_sustituto = #{nombreDestinatarioSustituto},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteModelo349OperadorIntraById" parameterType="Long">
+        delete from modelo_349_operador_intra where id = #{id}
+    </delete>
+
+    <delete id="deleteModelo349OperadorIntraByIds" parameterType="String">
+        delete from modelo_349_operador_intra where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

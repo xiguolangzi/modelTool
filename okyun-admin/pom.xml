@@ -61,6 +61,12 @@
             <artifactId>okyun-generator</artifactId>
         </dependency>
 
+        <!-- models 税务处理模块 -->
+        <dependency>
+            <groupId>com.okyun</groupId>
+            <artifactId>okyun-models</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
