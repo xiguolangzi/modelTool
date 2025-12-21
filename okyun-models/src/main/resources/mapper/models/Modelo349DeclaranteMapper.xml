@@ -71,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="nifDeclarante != null  and nifDeclarante != ''"> and nif_declarante = #{nifDeclarante}</if>
             <if test="nombreDeclarante != null  and nombreDeclarante != ''"> and nombre_declarante = #{nombreDeclarante}</if>
             <if test="numeroIdentificativo != null  and numeroIdentificativo != ''"> and numero_identificativo = #{numeroIdentificativo}</if>
+            <if test="numeroDeclaracionAnterior != null  and numeroDeclaracionAnterior != ''"> and numero_declaracion_anterior = #{numeroDeclaracionAnterior}</if>
             <if test="declaracionTipo != null  and declaracionTipo != ''"> and declaracion_tipo = #{declaracionTipo}</if>
             <if test="periodo != null  and periodo != ''"> and periodo = #{periodo}</if>
             <if test="estado != null  and estado != ''"> and estado = #{estado}</if>
@@ -181,6 +182,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null">remark = #{remark},</if>
         </trim>
         where id = #{id}
+    </update>
+
+    <!-- 根据申报的识别号修改状态 -->
+    <update id="updateStatusByNumeroDeclaracion">
+        update modelo_349_declarante set estado = #{estado} where numero_identificativo = #{numeroIdentificativo}
     </update>
 
     <delete id="deleteModelo349DeclaranteById" parameterType="Long">

@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.okyun.common.core.domain.entity.SysUser;
+import com.okyun.models.domain.ImportItemsTemplate1;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,7 +66,14 @@ public class Modelo349OperadorIntraController extends BaseController
     public void importTemplate(HttpServletResponse response)
     {
         ExcelUtil<Modelo349OperadorIntra> util = new ExcelUtil<Modelo349OperadorIntra>(Modelo349OperadorIntra.class);
-        util.importTemplateExcel(response, "用户数据");
+        util.importTemplateExcel(response, "申报349记录明细");
+    }
+
+    @PostMapping("/importCustomer1Template")
+    public void importCustomer1Template(HttpServletResponse response)
+    {
+        ExcelUtil<ImportItemsTemplate1> util = new ExcelUtil<ImportItemsTemplate1>(ImportItemsTemplate1.class);
+        util.importTemplateExcel(response, "申报349记录明细");
     }
 
     /**

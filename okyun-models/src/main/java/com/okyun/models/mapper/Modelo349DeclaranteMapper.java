@@ -4,6 +4,7 @@ import java.util.List;
 import com.okyun.models.domain.Modelo349Declarante;
 import com.okyun.models.domain.Modelo349OperadorIntra;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 349模型申报人主Mapper接口
@@ -93,4 +94,11 @@ public interface Modelo349DeclaranteMapper
      * @return
      */
     public boolean numeroIdentificativo(Modelo349Declarante modelo349Declarante);
+
+    /**
+     * 根据申报的识别号修改状态
+     * @param numeroIdentificativo
+     * @param estado
+     */
+    public void updateStatusByNumeroDeclaracion(@Param("numeroIdentificativo") String numeroIdentificativo, @Param("estado") String estado);
 }

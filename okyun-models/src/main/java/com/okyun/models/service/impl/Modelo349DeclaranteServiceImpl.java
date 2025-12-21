@@ -89,6 +89,18 @@ public class Modelo349DeclaranteServiceImpl implements IModelo349DeclaranteServi
         int rows = modelo349DeclaranteMapper.insertModelo349Declarante(modelo349Declarante);
         insertModelo349OperadorIntra(modelo349Declarante);
         if (rows > 0){
+            if (Model349Constants.DECLARACION_TIPO_COMPLEMENTARIO.equals(modelo349Declarante.getDeclaracionTipo())){
+                // 获取迁移申请识别号
+                String numeroDeclaracionAnterior = modelo349Declarante.getNumeroDeclaracionAnterior();
+                // 修改迁移识别号的状态为已更正
+                modelo349DeclaranteMapper.updateStatusByNumeroDeclaracion(numeroDeclaracionAnterior, Model349Constants.DECLARACION_STATUS_CORRECT);
+            }
+            if (Model349Constants.DECLARACION_TIPO_SUSTITUTIVO.equals(modelo349Declarante.getDeclaracionTipo())){
+                // 获取迁移申请识别号
+                String numeroDeclaracionAnterior = modelo349Declarante.getNumeroDeclaracionAnterior();
+                // 修改迁移识别号的状态为已替换
+                modelo349DeclaranteMapper.updateStatusByNumeroDeclaracion(numeroDeclaracionAnterior, Model349Constants.DECLARACION_STATUS_REPLACE);
+            }
             return modelo349DeclaranteMapper.selectModelo349DeclaranteById(modelo349Declarante.getId());
         } else {
             throw new ServiceException("新增349模型申报人失败");
@@ -97,6 +109,9 @@ public class Modelo349DeclaranteServiceImpl implements IModelo349DeclaranteServi
 
     // 检查税务识别的唯一
     private void checkUnique(Modelo349Declarante modelo349Declarante) {
+        if (Model349Constants.DEFAULT_NUMERO_IDENTIFICATIVO.equals(modelo349Declarante.getNumeroIdentificativo())){
+            return;
+        }
         if (modelo349DeclaranteMapper.numeroIdentificativo(modelo349Declarante)){
             throw new RuntimeException("税务识别号: [" + modelo349Declarante.getNumeroIdentificativo() + "] 已存在！");
         }
@@ -116,8 +131,7 @@ public class Modelo349DeclaranteServiceImpl implements IModelo349DeclaranteServi
         // 3 申报识别号，13位数字(前三位是349)
         if (modelo349Declarante.getNumeroIdentificativo() == null){
             // 初始
-            String numeroIdentificativo = "3490000000000";
-            modelo349Declarante.setNumeroIdentificativo(numeroIdentificativo);
+            modelo349Declarante.setNumeroIdentificativo(Model349Constants.DEFAULT_NUMERO_IDENTIFICATIVO);
         } else {
             // 检查是否位13位且开头三位是349
             if (modelo349Declarante.getNumeroIdentificativo().length() != 13 || !modelo349Declarante.getNumeroIdentificativo().startsWith("349")){
@@ -219,6 +233,18 @@ public class Modelo349DeclaranteServiceImpl implements IModelo349DeclaranteServi
         insertModelo349OperadorIntra(modelo349Declarante);
         int res = modelo349DeclaranteMapper.updateModelo349Declarante(modelo349Declarante);
         if (res > 0){
+            if (Model349Constants.DECLARACION_TIPO_COMPLEMENTARIO.equals(modelo349Declarante.getDeclaracionTipo())){
+                // 获取迁移申请识别号
+                String numeroDeclaracionAnterior = modelo349Declarante.getNumeroDeclaracionAnterior();
+                // 修改迁移识别号的状态为已更正
+                modelo349DeclaranteMapper.updateStatusByNumeroDeclaracion(numeroDeclaracionAnterior, Model349Constants.DECLARACION_STATUS_CORRECT);
+            }
+            if (Model349Constants.DECLARACION_TIPO_SUSTITUTIVO.equals(modelo349Declarante.getDeclaracionTipo())){
+                // 获取迁移申请识别号
+                String numeroDeclaracionAnterior = modelo349Declarante.getNumeroDeclaracionAnterior();
+                // 修改迁移识别号的状态为已替换
+                modelo349DeclaranteMapper.updateStatusByNumeroDeclaracion(numeroDeclaracionAnterior, Model349Constants.DECLARACION_STATUS_REPLACE);
+            }
             return modelo349DeclaranteMapper.selectModelo349DeclaranteById(modelo349Declarante.getId());
         } else {
             throw new ServiceException("修改349模型申报人主失败");
@@ -267,9 +293,12 @@ public class Modelo349DeclaranteServiceImpl implements IModelo349DeclaranteServi
             throw new ServiceException("请添加至少一条申请记录明细");
         }
 
+        // 是否更正
+        boolean isRectification = Model349Constants.isCorrector(modelo349Declarante.getDeclaracionTipo());
+
         // 处理并验证每个经营者记录
         List<Modelo349OperadorIntra> processedList = modelo349OperadorIntraList.stream()
-                .peek(operadorIntra -> processOperadorIntra(operadorIntra, modelo349Declarante, id))
+                .peek(operadorIntra -> processOperadorIntra(operadorIntra, modelo349Declarante, id, isRectification))
                 .toList();
 
         // 合并重复记录
@@ -283,8 +312,7 @@ public class Modelo349DeclaranteServiceImpl implements IModelo349DeclaranteServi
     /**
      * 处理单个经营者记录
      */
-    private void processOperadorIntra(Modelo349OperadorIntra operadorIntra,
-                                      Modelo349Declarante declarante, Long declaranteId) {
+    private void processOperadorIntra(Modelo349OperadorIntra operadorIntra, Modelo349Declarante declarante, Long declaranteId, boolean isRectification) {
         // 设置基本属性
         operadorIntra.setDeclaranteId(declaranteId);
         operadorIntra.setTipoRegistro(Model349Constants.OPERADOR_INTRA_DEFAULT_TIPO_REGISTRO);
@@ -296,17 +324,25 @@ public class Modelo349DeclaranteServiceImpl implements IModelo349DeclaranteServi
         operadorIntra.setNombreOperador(StringUtils.trimToEmpty(operadorIntra.getNombreOperador()));
         operadorIntra.setNombreDestinatarioSustituto(StringUtils.trimToEmpty(operadorIntra.getNombreDestinatarioSustituto()));
 
-        // 金额保证两位小数
-        operadorIntra.setBaseImponible(BigDecimalUtils.safeValue(operadorIntra.getBaseImponible()));
-        operadorIntra.setBaseImponibleRectificada(BigDecimalUtils.safeValue(operadorIntra.getBaseImponibleRectificada()));
-        operadorIntra.setBaseImponibleAnterior(BigDecimalUtils.safeValue(operadorIntra.getBaseImponibleAnterior()));
+        // 金额保证两位小数（是否更正修改）
+        if (!isRectification){
+            operadorIntra.setBaseImponible(BigDecimalUtils.safeValue(operadorIntra.getBaseImponible()));
+            operadorIntra.setBaseImponibleRectificada(BigDecimal.ZERO);
+            operadorIntra.setBaseImponibleAnterior(BigDecimal.ZERO);
+        } else {
+            operadorIntra.setBaseImponible(BigDecimal.ZERO);
+            operadorIntra.setBaseImponibleRectificada(BigDecimalUtils.safeValue(operadorIntra.getBaseImponibleRectificada()));
+            operadorIntra.setBaseImponibleAnterior(BigDecimalUtils.safeValue(operadorIntra.getBaseImponibleAnterior()));
+        }
 
         // 验证税号
         validateVatNumber(operadorIntra);
 
-        // 验证替代最终接收者税号
-        if (StringUtils.hasText(operadorIntra.getNifDestinatarioSustituto())) {
+        // 验证替代最终接收者税号(操作为C)
+        if (Model349Constants.OPERACION_TYPE_C.equals(operadorIntra.getClaveOperacion())){
             validateNifDestinatarioSustituto(operadorIntra);
+        } else {
+            operadorIntra.setNifDestinatarioSustituto(null);
         }
     }
 

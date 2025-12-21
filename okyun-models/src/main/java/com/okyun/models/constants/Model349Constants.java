@@ -11,6 +11,9 @@ public class Model349Constants {
     /**  349申报模型 */
     public static final String DEFAULT_MODELO_349 = "349";
 
+    /** 初始申请识别号 */
+    public static final String DEFAULT_NUMERO_IDENTIFICATIVO = "3490000000000";
+
 
 
     /** 申报类型 - 补充 C */
@@ -37,11 +40,17 @@ public class Model349Constants {
     /** 申报状态 - 已接收状态 A */
     public static final String DECLARACION_STATUS_RECEIVE = "A";
 
+    /** 申报状态 - 已拒绝状态 R */
+    public static final String DECLARACION_STATUS_REJECT = "R";
+
     /** 申报状态 - 已替换状态 S */
     public static final String DECLARACION_STATUS_REPLACE = "S";
 
     /** 申报状态 - 已更正状态该 I */
     public static final String DECLARACION_STATUS_CORRECT = "I";
+
+
+
 
     /** 操作类型 - 欧盟免税货物交付 E */
     public static final String OPERACION_TYPE_E = "E";
